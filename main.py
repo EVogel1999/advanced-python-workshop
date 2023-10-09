@@ -18,7 +18,7 @@ class PostIterator:
   async def __anext__(self):
     # Check if the index is greater then the max
     if self._index > 100:
-      raise StopIteration
+      raise StopAsyncIteration
 
     # Make the requests in parallel
     async with httpx.AsyncClient() as client:
@@ -26,10 +26,12 @@ class PostIterator:
       for i in range(self._post_per_next):
         index = self._index + i
         if index > 100:
-          raise StopIteration
+          raise StopAsyncIteration
 
         co.append(client.get(f'{self._url}/{index}'))
-        self._index += 1
+      
+      # Adjust the current index and return the responses
+      self._index += self._post_per_next
       resps = await asyncio.gather(*co)
     
     return [resp.json() for resp in resps]
@@ -38,6 +40,7 @@ class PostIterator:
 
 async def main():
   async for post_group in PostIterator(BASE_URL):
+    print('\n\n\n\n')
     pprint.pprint(post_group)
 
 
