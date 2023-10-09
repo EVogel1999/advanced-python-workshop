@@ -2,6 +2,8 @@ import asyncio
 import httpx
 import pprint
 
+from time import perf_counter
+
 
 BASE_URL = "https://jsonplaceholder.typicode.com"
 
@@ -45,4 +47,8 @@ async def main():
 
 
 if __name__ == "__main__":
+  start = perf_counter() 
   asyncio.run(main())
+  stop = perf_counter()
+
+  print(f'\n\n\n\nTotal Elapsed Time: {stop-start}')
